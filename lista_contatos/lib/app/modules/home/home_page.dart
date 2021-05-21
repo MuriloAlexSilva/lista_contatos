@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:lista_contatos/app/database/contact_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,11 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    contactDatabase.getAllContacts().then((list) {
-      setState(() {
-        contacts = list;
-      });
-    });
+    _getAllContacts();
   }
 
   @override
@@ -52,7 +49,10 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          //Para criar novo contato
+          Modular.to.pushNamed('/contactPage');
+        },
       ),
     );
   }
@@ -104,6 +104,21 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      onTap: () async {
+        //Para puxar os dados inseridos na tela
+        final recContact = await Modular.to
+            .pushNamed('/contactPage', arguments: contacts[index]);
+        await contactDatabase.updateContact(recContact);
+        _getAllContacts();
+      },
     );
+  }
+
+  void _getAllContacts() {
+    contactDatabase.getAllContacts().then((list) {
+      setState(() {
+        contacts = list;
+      });
+    });
   }
 }
