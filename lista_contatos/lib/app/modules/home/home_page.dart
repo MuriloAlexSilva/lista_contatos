@@ -106,10 +106,7 @@ class _HomePageState extends State<HomePage> {
       ),
       onTap: () async {
         //Para puxar os dados inseridos na tela
-        final recContact = await Modular.to
-            .pushNamed('/contactPage', arguments: contacts[index]);
-        await contactDatabase.updateContact(recContact);
-        _getAllContacts();
+        Modular.to.pushNamed('/contactPage', arguments: contacts[index]);
       },
     );
   }
