@@ -104,14 +104,13 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       onTap: () async {
-        _showNewContactPage();
-        // //Para puxar os dados inseridos na tela
-        // final recContact = await Modular.to
-        //     .pushNamed('/contactPage', arguments: contacts[index]);
-        // if (contacts != null) {
-        //   await contactDatabase.updateContact(recContact); //Atualizar o contato
-        //   _getAllContacts();
-        // }
+        //Para puxar os dados inseridos na tela
+        final recContact = await Modular.to
+            .pushNamed('/contactPage', arguments: contacts[index]);
+        if (contacts != null) {
+          await contactDatabase.updateContact(recContact); //Atualizar o contato
+          _getAllContacts();
+        }
       },
     );
   }
@@ -124,35 +123,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _showNewContactPage({Contact contact, int index}) async {
-    //Para puxar os dados inseridos na tela
-    if (index != null) {
-      final recNewContact = await Modular.to
-          .pushNamed('/contactPage', arguments: contacts[index]);
-      if (recNewContact != null) {
-        if (contact != null) {
-          await contactDatabase
-              .updateContact(recNewContact); //Atualizar o contato
+  void _showNewContactPage({Contact contact}) async {
+    final recNewContact = await Modular.to.pushNamed('/contactPage');
+    if (recNewContact != null) {
+      if (contact != null) {
+        await contactDatabase
+            .updateContact(recNewContact); //Atualizar o contato
 
-        } else {
-          await contactDatabase
-              .saveContact(recNewContact); //salvar contato novo
-        }
-        _getAllContacts();
+      } else {
+        await contactDatabase.saveContact(recNewContact); //salvar contato novo
       }
-    } else {
-      final recNewContact = await Modular.to.pushNamed('/contactPage');
-      if (recNewContact != null) {
-        if (contact != null) {
-          await contactDatabase
-              .updateContact(recNewContact); //Atualizar o contato
-
-        } else {
-          await contactDatabase
-              .saveContact(recNewContact); //salvar contato novo
-        }
-        _getAllContacts();
-      }
+      _getAllContacts();
     }
   }
 }
