@@ -10,7 +10,7 @@ class HomeModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute<String>('/', child: (context, args) => HomePage()),
-    //Para enviar os dados para a contactPage editar o usuario do index em questão
+    //Para enviar os dados para a contactPage e editar o usuario do index em questão
     ChildRoute<Contact>('/contactPage',
         child: (context, args) => ContactPage(
               contact: args.data,
