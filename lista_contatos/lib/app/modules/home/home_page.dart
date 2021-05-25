@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:lista_contatos/app/database/contact_data.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -103,14 +103,57 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      onTap: () async {
-        //Para puxar os dados inseridos na tela
-        final recContact = await Modular.to
-            .pushNamed('/contactPage', arguments: contacts[index]);
-        if (contacts != null) {
-          await contactDatabase.updateContact(recContact); //Atualizar o contato
-          _getAllContacts();
-        }
+      onTap: () {
+        _showOptions(context, index);
+      },
+    );
+  }
+
+  void _showOptions(BuildContext context, int index) {
+    showBottomSheet(
+      context: context,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {},
+          builder: (context) {
+            return Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        //Para utilizar o launch (package que chama o telefone), temos que importar o url_launcher
+                        launch('tel: ${contacts[index].phone}');
+                      },
+                      child: Text('Ligar',
+                          style: TextStyle(color: Colors.red, fontSize: 20))),
+                  TextButton(
+                      onPressed: () {
+                        Modular.to.pop();
+                        _showNewContactPage(
+                            text: contacts[index], contact: contacts[index]);
+                      },
+                      child: Text('Editar',
+                          style: TextStyle(color: Colors.red, fontSize: 20))),
+                  TextButton(
+                      onPressed: () {
+                        //Coloca dentro do setState para atulizar a pagina
+                        setState(() {
+                          contactDatabase.deleteContact(
+                              contacts[index].id); //remove o contato do db
+                          contacts.removeAt(index); //remove da lista
+                          Modular.to.pop();
+                        });
+                      },
+                      child: Text('Excluir',
+                          style: TextStyle(color: Colors.red, fontSize: 20))),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }
@@ -123,8 +166,9 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _showNewContactPage({Contact contact}) async {
-    final recNewContact = await Modular.to.pushNamed('/contactPage');
+  void _showNewContactPage({Contact contact, Object text}) async {
+    final recNewContact =
+        await Modular.to.pushNamed('/contactPage', arguments: text);
     if (recNewContact != null) {
       if (contact != null) {
         await contactDatabase
