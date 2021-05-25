@@ -50,8 +50,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.red,
         child: Icon(Icons.add),
         onPressed: () {
-          //Para criar novo contato
-          Modular.to.pushNamed('/contactPage');
+          _showNewContactPage();
         },
       ),
     );
@@ -106,7 +105,12 @@ class _HomePageState extends State<HomePage> {
       ),
       onTap: () async {
         //Para puxar os dados inseridos na tela
-        Modular.to.pushNamed('/contactPage', arguments: contacts[index]);
+        final recContact = await Modular.to
+            .pushNamed('/contactPage', arguments: contacts[index]);
+        if (contacts != null) {
+          await contactDatabase.updateContact(recContact); //Atualizar o contato
+          _getAllContacts();
+        }
       },
     );
   }
@@ -117,5 +121,20 @@ class _HomePageState extends State<HomePage> {
         contacts = list;
       });
     });
+  }
+
+  void _showNewContactPage({Contact contact}) async {
+    //Para puxar os dados inseridos na tela
+    final recNewContact = await Modular.to.pushNamed('/contactPage');
+    if (recNewContact != null) {
+      if (contact != null) {
+        await contactDatabase
+            .updateContact(recNewContact); //Atualizar o contato
+
+      } else {
+        await contactDatabase.saveContact(recNewContact); //salvar contato novo
+      }
+      _getAllContacts();
+    }
   }
 }

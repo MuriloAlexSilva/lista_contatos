@@ -7,7 +7,7 @@ import 'package:lista_contatos/app/database/contact_data.dart';
 class ContactPage extends StatefulWidget {
   final Contact contact;
 
-  ContactPage({Key key, this.contact}) : super(key: key);
+  ContactPage({this.contact});
 
   @override
   _ContactPageState createState() => _ContactPageState();
@@ -15,7 +15,7 @@ class ContactPage extends StatefulWidget {
 
 class _ContactPageState extends State<ContactPage> {
   Contact _editedContact;
-  bool _userEdited = false;
+  bool userEdited = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -72,8 +72,9 @@ class _ContactPageState extends State<ContactPage> {
               decoration: InputDecoration(labelText: 'Name'),
               keyboardType: TextInputType.name,
               onChanged: (text) {
-                _userEdited = true;
+                userEdited = true;
                 setState(() {
+                  //Para atualizar o titulo da AppBar
                   _editedContact.name = text;
                 });
               },
@@ -83,7 +84,7 @@ class _ContactPageState extends State<ContactPage> {
               decoration: InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
               onChanged: (text) {
-                _userEdited = true;
+                userEdited = true;
                 _editedContact.email = text;
               },
             ),
@@ -92,7 +93,7 @@ class _ContactPageState extends State<ContactPage> {
               decoration: InputDecoration(labelText: 'Phone'),
               keyboardType: TextInputType.phone,
               onChanged: (text) {
-                _userEdited = true;
+                userEdited = true;
                 _editedContact.phone = text;
               },
             ),
