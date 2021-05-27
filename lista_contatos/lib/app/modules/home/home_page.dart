@@ -4,6 +4,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:lista_contatos/app/database/contact_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+enum OrderOptions { orderaz, orderza }
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,13 +31,17 @@ class _HomePageState extends State<HomePage> {
         title: Text('Contatos'),
         centerTitle: true,
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.filter_list,
-              size: 32,
-            ),
-          )
+          PopupMenuButton<OrderOptions>(
+            itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+              const PopupMenuItem<OrderOptions>(
+                  child: Text('Ordernar de A a Z'),
+                  value: OrderOptions.orderaz),
+              const PopupMenuItem<OrderOptions>(
+                  child: Text('Ordernar de Z a A'),
+                  value: OrderOptions.orderza),
+            ],
+            onSelected: _orderList,
+          ),
         ],
       ),
       backgroundColor: Colors.white,
@@ -72,6 +78,7 @@ class _HomePageState extends State<HomePage> {
                     image: contacts[index].image != null
                         ? FileImage(File(contacts[index].image))
                         : AssetImage("lib/app/images/person.png"),
+                    fit: BoxFit.cover, //Para deixar a imagem arredondada
                   ),
                 ),
               ),
@@ -179,5 +186,21 @@ class _HomePageState extends State<HomePage> {
       }
       _getAllContacts();
     }
+  }
+
+  void _orderList(OrderOptions result) {
+    switch (result) {
+      case OrderOptions.orderaz:
+        contacts.sort((a, b) {
+          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+        });
+        break;
+      case OrderOptions.orderza:
+        contacts.sort((a, b) {
+          return b.name.toLowerCase().compareTo(a.name.toLowerCase());
+        });
+        break;
+    }
+    setState(() {});
   }
 }

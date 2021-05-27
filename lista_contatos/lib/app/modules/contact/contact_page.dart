@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lista_contatos/app/database/contact_data.dart';
 
 class ContactPage extends StatefulWidget {
@@ -65,9 +66,23 @@ class _ContactPageState extends State<ContactPage> {
                       image: _editedContact.image != null
                           ? FileImage(File(_editedContact.image))
                           : AssetImage("lib/app/images/person.png"),
+                      fit: BoxFit.cover, //Para deixar a imagem arredondada
                     ),
                   ),
                 ),
+                onTap: () {
+                  //Para chamar a camera do celular
+                  ImagePicker.pickImage(source: ImageSource.camera)
+                      .then((file) {
+                    if (file == null) {
+                      return;
+                    } else {
+                      setState(() {
+                        _editedContact.image = file.path;
+                      });
+                    }
+                  });
+                },
               ),
               TextField(
                 controller: _nameController,
